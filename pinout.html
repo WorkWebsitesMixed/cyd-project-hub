@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CYD Pinout — GPIO Reference | CYD Project Hub</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1f232d; --line:#2b303b;
+    --txt:#e8eaed; --muted:#9aa3b2; --accent:#ffd23f; --accent2:#3fb6ff;
+    --chip:#232834;
+    --c-disp:#3fb6ff; --c-touch:#b98bff; --c-sd:#54d17a; --c-led:#ff6b8a;
+    --c-ldr:#ffd23f; --c-audio:#ff9d54; --c-free:#6ed0c9; --c-chip:#8a93a5;
+  }
+  @media (prefers-color-scheme: light){
+    :root{
+      --bg:#f6f7f9; --panel:#ffffff; --panel2:#f0f2f5; --line:#dfe3ea;
+      --txt:#1a1d23; --muted:#5b6472; --accent:#d9a400; --accent2:#0a84d1;
+      --chip:#eef1f5;
+      --c-disp:#0a84d1; --c-touch:#7a3ff0; --c-sd:#1e9e52; --c-led:#d23f5e;
+      --c-ldr:#c08a00; --c-audio:#c86a15; --c-free:#159c92; --c-chip:#5b6472;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);
+    font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+  a{color:var(--accent2);text-decoration:none} a:hover{text-decoration:underline}
+  .wrap{max-width:960px;margin:0 auto;padding:0 20px}
+  header.hero{padding:36px 0 24px;border-bottom:1px solid var(--line);
+    background:radial-gradient(1000px 260px at 20% -30%, rgba(63,182,255,.12), transparent);}
+  .back{font-size:14px;color:var(--muted)}
+  h1{margin:10px 0 8px;font-size:30px}
+  .sub{color:var(--muted);margin:0;max-width:680px}
+  main{padding:10px 0 40px}
+  h2{font-size:22px;margin:34px 0 10px}
+  h3{font-size:16px;margin:18px 0 4px}
+  p{margin:8px 0}
+  code{background:var(--chip);padding:1px 6px;border-radius:6px;font-size:14px}
+
+  /* Board map */
+  .board{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:18px 0 8px}
+  .blk{border:1px solid var(--line);border-left:4px solid var(--bl,var(--accent2));
+    background:var(--panel);border-radius:10px;padding:12px 14px}
+  .blk h4{margin:0 0 8px;font-size:14px;display:flex;align-items:center;gap:8px}
+  .blk h4 .dot{width:10px;height:10px;border-radius:50%;background:var(--bl,var(--accent2))}
+  .blk .pins{display:flex;flex-wrap:wrap;gap:6px}
+  .pin{font:600 12px/1 ui-monospace,Menlo,Consolas,monospace;background:var(--chip);
+    color:var(--txt);border-radius:6px;padding:5px 7px;white-space:nowrap}
+  .pin small{color:var(--muted);font-weight:400}
+  .center{display:flex;flex-direction:column;align-items:center;justify-content:center;
+    background:linear-gradient(160deg,var(--panel),var(--panel2));border:1px solid var(--line);
+    border-radius:14px;padding:14px;text-align:center}
+  .center .name{font-weight:800;font-size:16px}
+  .center .role{color:var(--muted);font-size:12px;margin-top:4px}
+  .center .scr{margin-top:10px;width:100%;max-width:150px;aspect-ratio:4/3;border-radius:6px;
+    background:repeating-linear-gradient(135deg,#ffd23f22,#ffd23f22 8px,#ffd23f11 8px,#ffd23f11 16px);
+    border:2px solid var(--accent);display:flex;align-items:center;justify-content:center;
+    color:var(--muted);font-size:11px}
+  .disp{--bl:var(--c-disp)} .touch{--bl:var(--c-touch)} .sd{--bl:var(--c-sd)}
+  .led{--bl:var(--c-led)} .ldr{--bl:var(--c-ldr)} .audio{--bl:var(--c-audio)} .free{--bl:var(--c-free)}
+  @media(max-width:720px){.board{grid-template-columns:1fr 1fr}.center{grid-column:1/-1;order:-1}}
+
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px}
+  th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
+  th{color:var(--muted);font-weight:600}
+  td code{font-size:13px}
+  .swatch{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:middle}
+  .note{border-left:3px solid var(--accent2);background:var(--panel2);padding:12px 16px;border-radius:8px;margin:14px 0}
+  .warn{border-left:3px solid var(--c-audio);background:var(--panel2);padding:12px 16px;border-radius:8px;margin:14px 0}
+  footer{border-top:1px solid var(--line);margin-top:30px;padding:22px 0;color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <a class="back" href="index.html">← Back to CYD Project Hub</a>
+    <h1>CYD Pinout &amp; GPIO Map</h1>
+    <p class="sub">Every onboard peripheral on the ESP32-2432S028R and the GPIO it lives on — so you know what's already taken and what's free to use. Color-coded by subsystem.</p>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <h2>Board map</h2>
+  <div class="board">
+    <div class="blk disp">
+      <h4><span class="dot"></span>Display · ILI9341 (SPI)</h4>
+      <div class="pins">
+        <span class="pin">CS <small>15</small></span>
+        <span class="pin">DC <small>2</small></span>
+        <span class="pin">SCK <small>14</small></span>
+        <span class="pin">MOSI <small>13</small></span>
+        <span class="pin">MISO <small>12</small></span>
+        <span class="pin">BL <small>21</small></span>
+      </div>
+    </div>
+
+    <div class="blk touch">
+      <h4><span class="dot"></span>Touch · XPT2046 (SPI)</h4>
+      <div class="pins">
+        <span class="pin">CS <small>33</small></span>
+        <span class="pin">IRQ <small>36</small></span>
+        <span class="pin">CLK <small>25</small></span>
+        <span class="pin">MOSI <small>32</small></span>
+        <span class="pin">MISO <small>39</small></span>
+      </div>
+    </div>
+
+    <div class="blk sd">
+      <h4><span class="dot"></span>microSD (SPI)</h4>
+      <div class="pins">
+        <span class="pin">CS <small>5</small></span>
+        <span class="pin">SCK <small>18</small></span>
+        <span class="pin">MOSI <small>23</small></span>
+        <span class="pin">MISO <small>19</small></span>
+      </div>
+    </div>
+
+    <div class="blk led">
+      <h4><span class="dot"></span>RGB LED <small style="color:var(--muted);font-weight:400">(active LOW)</small></h4>
+      <div class="pins">
+        <span class="pin">R <small>4</small></span>
+        <span class="pin">G <small>16</small></span>
+        <span class="pin">B <small>17</small></span>
+      </div>
+    </div>
+
+    <div class="center">
+      <div class="name">ESP32-WROOM-32</div>
+      <div class="role">Dual-core · WiFi + BT · 2.4 GHz only</div>
+      <div class="scr">2.8" 240×320</div>
+    </div>
+
+    <div class="blk ldr">
+      <h4><span class="dot"></span>Light sensor (LDR)</h4>
+      <div class="pins">
+        <span class="pin">ADC <small>34</small> <small>· input-only</small></span>
+      </div>
+    </div>
+
+    <div class="blk audio">
+      <h4><span class="dot"></span>Audio / Speaker</h4>
+      <div class="pins">
+        <span class="pin">DAC <small>26</small></span>
+        <span class="pin"><small>onboard amp → "Speak" JST</small></span>
+      </div>
+    </div>
+
+    <div class="blk free">
+      <h4><span class="dot"></span>Free header GPIO</h4>
+      <div class="pins">
+        <span class="pin">22</span>
+        <span class="pin">27</span>
+        <span class="pin">35 <small>· in-only</small></span>
+        <span class="pin">0 <small>· boot</small></span>
+      </div>
+    </div>
+
+    <div class="blk">
+      <h4><span class="dot" style="background:var(--c-chip)"></span>Power / USB</h4>
+      <div class="pins">
+        <span class="pin">5V / 3V3 / GND</span>
+        <span class="pin">TX <small>1</small></span>
+        <span class="pin">RX <small>3</small></span>
+      </div>
+    </div>
+  </div>
+  <p style="font-size:13px;color:var(--muted)">Pin numbers are ESP32 GPIO numbers. Blocks are grouped by function, not physical layout.</p>
+
+  <h2>Full GPIO reference</h2>
+  <table>
+    <tr><th>GPIO</th><th>Function</th><th>Subsystem</th><th>Notes</th></tr>
+    <tr><td><code>2</code></td><td>TFT DC (data/command)</td><td><span class="swatch" style="background:var(--c-disp)"></span>Display</td><td>Strapping pin</td></tr>
+    <tr><td><code>12</code></td><td>TFT MISO</td><td><span class="swatch" style="background:var(--c-disp)"></span>Display</td><td>Strapping pin</td></tr>
+    <tr><td><code>13</code></td><td>TFT MOSI</td><td><span class="swatch" style="background:var(--c-disp)"></span>Display</td><td></td></tr>
+    <tr><td><code>14</code></td><td>TFT SCLK</td><td><span class="swatch" style="background:var(--c-disp)"></span>Display</td><td></td></tr>
+    <tr><td><code>15</code></td><td>TFT CS</td><td><span class="swatch" style="background:var(--c-disp)"></span>Display</td><td>Strapping pin</td></tr>
+    <tr><td><code>21</code></td><td>TFT Backlight</td><td><span class="swatch" style="background:var(--c-disp)"></span>Display</td><td>ON = HIGH; PWM for dimming</td></tr>
+    <tr><td><code>25</code></td><td>Touch CLK</td><td><span class="swatch" style="background:var(--c-touch)"></span>Touch</td><td></td></tr>
+    <tr><td><code>32</code></td><td>Touch MOSI</td><td><span class="swatch" style="background:var(--c-touch)"></span>Touch</td><td></td></tr>
+    <tr><td><code>33</code></td><td>Touch CS</td><td><span class="swatch" style="background:var(--c-touch)"></span>Touch</td><td></td></tr>
+    <tr><td><code>36</code></td><td>Touch IRQ</td><td><span class="swatch" style="background:var(--c-touch)"></span>Touch</td><td>Input-only (SENSOR_VP)</td></tr>
+    <tr><td><code>39</code></td><td>Touch MISO</td><td><span class="swatch" style="background:var(--c-touch)"></span>Touch</td><td>Input-only (SENSOR_VN)</td></tr>
+    <tr><td><code>5</code></td><td>SD CS</td><td><span class="swatch" style="background:var(--c-sd)"></span>microSD</td><td>Strapping pin</td></tr>
+    <tr><td><code>18</code></td><td>SD SCK</td><td><span class="swatch" style="background:var(--c-sd)"></span>microSD</td><td></td></tr>
+    <tr><td><code>19</code></td><td>SD MISO</td><td><span class="swatch" style="background:var(--c-sd)"></span>microSD</td><td></td></tr>
+    <tr><td><code>23</code></td><td>SD MOSI</td><td><span class="swatch" style="background:var(--c-sd)"></span>microSD</td><td></td></tr>
+    <tr><td><code>4</code></td><td>RGB LED — Red</td><td><span class="swatch" style="background:var(--c-led)"></span>LED</td><td>Active LOW</td></tr>
+    <tr><td><code>16</code></td><td>RGB LED — Green</td><td><span class="swatch" style="background:var(--c-led)"></span>LED</td><td>Active LOW</td></tr>
+    <tr><td><code>17</code></td><td>RGB LED — Blue</td><td><span class="swatch" style="background:var(--c-led)"></span>LED</td><td>Active LOW</td></tr>
+    <tr><td><code>34</code></td><td>Light sensor (LDR)</td><td><span class="swatch" style="background:var(--c-ldr)"></span>Sensor</td><td>Input-only ADC</td></tr>
+    <tr><td><code>26</code></td><td>Speaker / audio out</td><td><span class="swatch" style="background:var(--c-audio)"></span>Audio</td><td>DAC → onboard amp</td></tr>
+    <tr><td><code>22</code></td><td>Free I/O</td><td><span class="swatch" style="background:var(--c-free)"></span>Header</td><td>Safe general-purpose</td></tr>
+    <tr><td><code>27</code></td><td>Free I/O</td><td><span class="swatch" style="background:var(--c-free)"></span>Header</td><td>Safe general-purpose</td></tr>
+    <tr><td><code>35</code></td><td>Free input</td><td><span class="swatch" style="background:var(--c-free)"></span>Header</td><td>Input-only</td></tr>
+    <tr><td><code>0</code></td><td>Boot button</td><td><span class="swatch" style="background:var(--c-free)"></span>Header</td><td>Strapping — avoid at boot</td></tr>
+    <tr><td><code>1 / 3</code></td><td>UART0 TX / RX</td><td><span class="swatch" style="background:var(--c-chip)"></span>USB</td><td>Used by USB serial / flashing</td></tr>
+  </table>
+
+  <div class="warn"><strong>The "free" pins are limited.</strong> The CYD only breaks out a handful of usable GPIO on its JST connectors — commonly <code>22</code>, <code>27</code>, <code>35</code> (input-only) plus power. If a project needs several free pins (I²C sensor + more), plan around these. Pins <code>34/35/36/39</code> are <em>input-only</em> and have no internal pull-ups.</div>
+
+  <div class="note"><strong>Strapping pins</strong> (<code>0, 2, 12, 15</code>) affect how the ESP32 boots — most are used by the display, so avoid repurposing them and don't hold them at odd levels during reset. To dim the screen, drive <code>GPIO21</code> with PWM.</div>
+
+  <h3>Board revisions vary</h3>
+  <p>There are several CYD variants (resistive vs capacitive touch, single/dual USB, USB-C vs micro-USB, and occasionally a different display controller). The pins above match the common <strong>ESP32-2432S028R</strong>. Always confirm against the authoritative <a href="https://github.com/witnessmenow/ESP32-Cheap-Yellow-Display/blob/main/PINS.md" target="_blank" rel="noopener">PINS.md / SETUP.md in the official repo ↗</a> before wiring anything.</p>
+
+  <p style="margin-top:24px"><a href="index.html">← Back to all projects</a> · <a href="build-order.html">See the suggested build order →</a></p>
+</main>
+
+<footer>
+  <div class="wrap"><p>Pin data compiled from the official ESP32-Cheap-Yellow-Display documentation. Verify against your specific board revision.</p></div>
+</footer>
+</body>
+</html>

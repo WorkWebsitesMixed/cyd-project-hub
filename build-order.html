@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Suggested Build Order | CYD Project Hub</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1f232d; --line:#2b303b;
+    --txt:#e8eaed; --muted:#9aa3b2; --accent:#ffd23f; --accent2:#3fb6ff;
+    --good:#54d17a; --warn:#ff9d54; --chip:#232834;
+    --s0:#8a93a5; --s1:#54d17a; --s2:#3fb6ff; --s3:#ffd23f; --s4:#b98bff; --s5:#ff9d54; --s6:#ff6b8a;
+  }
+  @media (prefers-color-scheme: light){
+    :root{
+      --bg:#f6f7f9; --panel:#ffffff; --panel2:#f0f2f5; --line:#dfe3ea;
+      --txt:#1a1d23; --muted:#5b6472; --accent:#d9a400; --accent2:#0a84d1;
+      --good:#1e9e52; --warn:#c86a15; --chip:#eef1f5;
+      --s0:#5b6472; --s1:#1e9e52; --s2:#0a84d1; --s3:#c08a00; --s4:#7a3ff0; --s5:#c86a15; --s6:#d23f5e;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);
+    font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+  a{color:var(--accent2);text-decoration:none} a:hover{text-decoration:underline}
+  .wrap{max-width:860px;margin:0 auto;padding:0 20px}
+  header.hero{padding:36px 0 24px;border-bottom:1px solid var(--line);
+    background:radial-gradient(1000px 260px at 20% -30%, rgba(84,209,122,.12), transparent);}
+  .back{font-size:14px;color:var(--muted)}
+  h1{margin:10px 0 8px;font-size:30px}
+  .sub{color:var(--muted);margin:0;max-width:680px}
+  main{padding:14px 0 40px}
+
+  .road{position:relative;margin:24px 0;padding-left:36px}
+  .road::before{content:"";position:absolute;left:15px;top:6px;bottom:6px;width:2px;background:var(--line)}
+  .stage{position:relative;margin:0 0 22px}
+  .stage::before{content:"";position:absolute;left:-29px;top:4px;width:16px;height:16px;border-radius:50%;
+    background:var(--sc,var(--accent));box-shadow:0 0 0 4px var(--bg)}
+  .stage .lbl{display:inline-block;font-size:12px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;
+    color:var(--sc);border:1px solid var(--sc);border-radius:20px;padding:2px 9px}
+  .stage h2{font-size:20px;margin:8px 0 2px}
+  .stage .goal{color:var(--muted);margin:0 0 10px;font-size:14.5px}
+  .stage .skill{font-size:13px;color:var(--muted);margin:0 0 10px}
+  .stage .skill b{color:var(--txt)}
+  .builds{display:flex;flex-wrap:wrap;gap:8px}
+  .b{display:inline-flex;align-items:center;gap:6px;background:var(--panel);border:1px solid var(--line);
+    border-radius:20px;padding:5px 12px;font-size:13.5px}
+  .b .tag{font-size:11px;padding:1px 7px;border-radius:20px;background:var(--chip);color:var(--muted)}
+  .b.star{border-color:var(--sc)}
+  .s0{--sc:var(--s0)} .s1{--sc:var(--s1)} .s2{--sc:var(--s2)} .s3{--sc:var(--s3)}
+  .s4{--sc:var(--s4)} .s5{--sc:var(--s5)} .s6{--sc:var(--s6)}
+
+  .note{border-left:3px solid var(--accent2);background:var(--panel2);padding:12px 16px;border-radius:8px;margin:16px 0}
+  .tip{border-left:3px solid var(--good);background:var(--panel2);padding:12px 16px;border-radius:8px;margin:16px 0}
+  footer{border-top:1px solid var(--line);margin-top:20px;padding:22px 0;color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <a class="back" href="index.html">← Back to CYD Project Hub</a>
+    <h1>Suggested Build Order</h1>
+    <p class="sub">A path from "just unboxed it" to advanced builds. Each stage adds one new skill, so nothing feels like a cliff. Everything up to Stage 5 needs <strong>no extra hardware</strong>.</p>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <div class="tip"><strong>The 10-minute confidence boost:</strong> if you just want to see your board light up <em>today</em> with zero coding, flash the <a href="index.html">ESP32 Marauder</a> via its web flasher first. Then come back and do Stage 0 properly.</div>
+
+  <div class="road">
+
+    <div class="stage s0">
+      <span class="lbl">Stage 0 · Prove the board</span>
+      <h2>Make sure the screen + touch work</h2>
+      <p class="goal">Before any real project, flash a known-good demo so you know your toolchain and board are healthy.</p>
+      <p class="skill"><b>You'll learn:</b> Arduino IDE + ESP32 core setup, uploading, and the all-important <b>TFT_eSPI User_Setup</b> config.</p>
+      <div class="builds">
+        <span class="b star"><a href="https://github.com/witnessmenow/ESP32-Cheap-Yellow-Display" target="_blank" rel="noopener">Official CYD examples ↗</a></span>
+        <span class="b"><a href="pinout.html">Pinout reference</a></span>
+        <span class="b">Touch calibration <span class="tag">15 min</span></span>
+      </div>
+    </div>
+
+    <div class="stage s1">
+      <span class="lbl">Stage 1 · Your first real build</span>
+      <h2>An internet display that does something you care about</h2>
+      <p class="goal">A single, satisfying win. This is the project everyone remembers building first.</p>
+      <p class="skill"><b>You'll learn:</b> WiFi credentials, calling a web API, and drawing text + images to the screen.</p>
+      <div class="builds">
+        <span class="b star">🎧 <a href="spotify.html">Spotify DIY Thing — full walkthrough</a> <span class="tag">Beginner</span></span>
+        <span class="b">F1 Notifier <span class="tag">Beginner</span></span>
+        <span class="b">GitHub Stats <span class="tag">Beginner</span></span>
+      </div>
+    </div>
+
+    <div class="stage s2">
+      <span class="lbl">Stage 2 · More no-hardware dashboards</span>
+      <h2>Repeat the pattern, build fluency</h2>
+      <p class="goal">Now that APIs click, knock out a few more. Each reinforces the same skills with new data.</p>
+      <p class="skill"><b>You'll learn:</b> JSON parsing, refresh loops, and laying out a nicer UI.</p>
+      <div class="builds">
+        <span class="b">Aura Weather <span class="tag">Beginner</span></span>
+        <span class="b">London Tube Arrivals <span class="tag">Interm.</span></span>
+        <span class="b">System Monitor (Glances) <span class="tag">Interm.</span></span>
+      </div>
+    </div>
+
+    <div class="stage s3">
+      <span class="lbl">Stage 3 · Fun &amp; toys</span>
+      <h2>Play with graphics &amp; touch</h2>
+      <p class="goal">Lighter on networking, heavier on the fun. Great for showing people.</p>
+      <p class="skill"><b>You'll learn:</b> animation loops, the touch controller as input, and frame timing.</p>
+      <div class="builds">
+        <span class="b">Pixel Aquarium <span class="tag">Beginner</span></span>
+        <span class="b">Slots o' Fun <span class="tag">Beginner</span></span>
+        <span class="b">Paintbox <span class="tag">Beginner</span></span>
+        <span class="b">Fluid Simulation <span class="tag">Interm.</span></span>
+      </div>
+    </div>
+
+    <div class="stage s4">
+      <span class="lbl">Stage 4 · Smart home (still no extra HW)</span>
+      <h2>Make it useful on your wall or desk</h2>
+      <p class="goal">Turn the CYD into a control panel. ESPHome projects are YAML — a gentle on-ramp before deeper coding.</p>
+      <p class="skill"><b>You'll learn:</b> ESPHome/MQTT, talking to Home Assistant, and building touch control grids.</p>
+      <div class="builds">
+        <span class="b">Home Assistant Monitor <span class="tag">Interm.</span></span>
+        <span class="b">CYD-Klipper <span class="tag">Beginner</span></span>
+        <span class="b">Stream Deck <span class="tag">Interm.</span></span>
+        <span class="b">Sonos Remote <span class="tag">Interm.</span></span>
+      </div>
+    </div>
+
+    <div class="stage s5">
+      <span class="lbl">Stage 5 · Add your first sensor</span>
+      <h2>Cross into hardware — one wire at a time</h2>
+      <p class="goal">Your first project with a part beyond the board. Start with a 3-pin sensor before anything with motors/relays.</p>
+      <p class="skill"><b>You'll learn:</b> wiring to the CYD's <a href="pinout.html">free GPIO</a>, reading a sensor, and graphing live data.</p>
+      <div class="builds">
+        <span class="b">DHT11 Temp/Humidity <span class="tag">🔧 sensor</span></span>
+        <span class="b">Air-Quality Traffic Light <span class="tag">🔧 CO₂</span></span>
+      </div>
+    </div>
+
+    <div class="stage s6">
+      <span class="lbl">Stage 6 · Advanced &amp; retro</span>
+      <h2>Emulators, controllers &amp; deeper code</h2>
+      <p class="goal">The big-swing builds — extra controllers, audio, or heavier firmware. You're ready now.</p>
+      <p class="skill"><b>You'll learn:</b> external inputs (Nunchuck/BLE), audio/DAC, SD streaming, and performance tuning.</p>
+      <div class="builds">
+        <span class="b">Galagino arcade <span class="tag">🔧 Nunchuck</span></span>
+        <span class="b">T-HMI-C64 <span class="tag">🔧 keyboard</span></span>
+        <span class="b">NerdMiner v2 <span class="tag">Beginner*</span></span>
+        <span class="b">BAM Game Engine <span class="tag">Advanced</span></span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="note"><strong>Not a strict ladder.</strong> Skip around by interest — the only real prerequisite is Stage 0. If smart home is why you bought the board, jump to Stage 4; the ESPHome path barely needs coding. NerdMiner is marked Beginner* because it's a web-flash, even though mining sounds advanced.</div>
+
+  <p style="margin-top:22px"><a href="index.html">← Browse all projects</a> · <a href="pinout.html">Pinout &amp; GPIO map →</a></p>
+</main>
+
+<footer>
+  <div class="wrap"><p>A suggested path, not a rulebook. Build what excites you.</p></div>
+</footer>
+</body>
+</html>
