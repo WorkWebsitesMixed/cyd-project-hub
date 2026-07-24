@@ -9,12 +9,14 @@
     --bg:#0f1115; --panel:#171a21; --panel2:#1f232d; --line:#2b303b;
     --txt:#e8eaed; --muted:#9aa3b2; --accent:#ffd23f; --accent2:#3fb6ff;
     --good:#54d17a; --warn:#ff9d54; --chip:#232834;
+    --beg:#54d17a; --int:#3fb6ff; --adv:#ff6b8a;
   }
   @media (prefers-color-scheme: light){
     :root{
       --bg:#f6f7f9; --panel:#ffffff; --panel2:#f0f2f5; --line:#dfe3ea;
       --txt:#1a1d23; --muted:#5b6472; --accent:#d9a400; --accent2:#0a84d1;
       --good:#1e9e52; --warn:#c86a15; --chip:#eef1f5;
+      --beg:#1e9e52; --int:#0a84d1; --adv:#d23f5e;
     }
   }
   *{box-sizing:border-box}
@@ -30,6 +32,9 @@
   h1{margin:14px 0 8px;font-size:34px;line-height:1.1}
   h1 .y{color:var(--accent)}
   .sub{color:var(--muted);max-width:720px;font-size:16px}
+  .cta{display:inline-block;margin-top:16px;background:#1DB954;color:#fff;font-weight:700;
+    padding:10px 16px;border-radius:10px;font-size:14px}
+  .cta:hover{text-decoration:none;filter:brightness(1.08)}
   .stats{display:flex;gap:22px;margin-top:18px;flex-wrap:wrap}
   .stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 16px;min-width:120px}
   .stat b{display:block;font-size:24px;color:var(--accent)}
@@ -38,7 +43,7 @@
   .controls{position:sticky;top:0;z-index:5;background:var(--bg);
     border-bottom:1px solid var(--line);padding:14px 0;margin-bottom:8px}
   .controls .wrap{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-  input#q{flex:1;min-width:200px;background:var(--panel);border:1px solid var(--line);
+  input#q{flex:1;min-width:180px;background:var(--panel);border:1px solid var(--line);
     color:var(--txt);border-radius:10px;padding:10px 12px;font-size:14px}
   select,button.tgl{background:var(--panel);border:1px solid var(--line);color:var(--txt);
     border-radius:10px;padding:10px 12px;font-size:14px;cursor:pointer}
@@ -62,12 +67,17 @@
   .card h3 a:hover{color:var(--accent2)}
   .card p{margin:0;color:var(--muted);font-size:13.5px}
   .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:2px}
-  .hw{font-size:12px;font-weight:700;padding:3px 9px;border-radius:20px;white-space:nowrap}
+  .pill{font-size:12px;font-weight:700;padding:3px 9px;border-radius:20px;white-space:nowrap}
   .hw.none{background:rgba(84,209,122,.15);color:var(--good)}
   .hw.needs{background:rgba(255,157,84,.15);color:var(--warn)}
+  .df{border:1px solid transparent}
+  .df.Beginner{color:var(--beg);border-color:var(--beg)}
+  .df.Intermediate{color:var(--int);border-color:var(--int)}
+  .df.Advanced{color:var(--adv);border-color:var(--adv)}
   .cat{font-size:11px;color:var(--muted);background:var(--chip);padding:3px 8px;border-radius:20px}
   .chk{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);cursor:pointer;user-select:none}
   .chk input{accent-color:var(--accent)}
+  .guide-link{font-size:12px;font-weight:700;color:#1DB954}
   .idea{border-style:dashed}
   .idea .hw.none{background:rgba(63,182,255,.13);color:var(--accent2)}
 
@@ -89,11 +99,14 @@
     <span class="badge">Cheap Yellow Display · ESP32-2432S028R</span>
     <h1>CYD Project <span class="y">Hub</span></h1>
     <p class="sub">A curated, filterable catalog of Cheap Yellow Display projects — useful <em>and</em> fun.
-    Green means it runs on a stock CYD (screen + WiFi, nothing else to buy). Filter to
-    <strong>No extra hardware</strong> to see the quickest wins. Tick projects off as you build them.</p>
+    Green means it runs on a stock CYD (screen + WiFi, nothing else to buy). Each project shows a
+    <strong>difficulty</strong>. Filter to <strong>No extra hardware</strong> + <strong>Beginner</strong>
+    for the fastest first wins, and tick projects off as you build them.</p>
+    <a class="cta" href="spotify.html">🎧 New here? Start with the Spotify build walkthrough →</a>
     <div class="stats">
       <div class="stat"><b id="s-total">0</b><span>projects listed</span></div>
       <div class="stat"><b id="s-none">0</b><span>need no extra hardware</span></div>
+      <div class="stat"><b id="s-beg">0</b><span>beginner-friendly</span></div>
       <div class="stat"><b id="s-done">0</b><span>you've built</span></div>
     </div>
   </div>
@@ -103,6 +116,12 @@
   <div class="wrap">
     <input id="q" placeholder="Search projects…">
     <select id="cat"><option value="">All categories</option></select>
+    <select id="diff">
+      <option value="">Any difficulty</option>
+      <option value="Beginner">Beginner</option>
+      <option value="Intermediate">Intermediate</option>
+      <option value="Advanced">Advanced</option>
+    </select>
     <button class="tgl" id="onlyNone">✅ No extra hardware</button>
     <button class="tgl" id="hideDone">Hide built</button>
     <button class="muted-btn" id="reset">Reset ticks</button>
@@ -129,7 +148,7 @@
         <li>Board: <code>ESP32 Dev Module</code>. Most CYD projects use the <strong>TFT_eSPI</strong> library — the repo usually includes a ready <code>User_Setup.h</code> (ILI9341, 240×320, correct pins). Copy it into the library folder.</li>
         <li>Touch uses the <strong>XPT2046</strong> resistive controller — many repos bundle <code>XPT2046_Touchscreen</code> or <code>bb_captouch</code>.</li>
         <li>Set your WiFi SSID/password + any API keys in the sketch's config/secrets file, then Upload.</li>
-        <li><strong>Best reference:</strong> the official <a href="https://github.com/witnessmenow/ESP32-Cheap-Yellow-Display">ESP32-Cheap-Yellow-Display</a> repo — pinouts, board variants (some ship the cheaper resistive vs newer capacitive touch), and troubleshooting.</li>
+        <li><strong>Full step-by-step for your first build:</strong> see the <a href="spotify.html">Spotify walkthrough</a>.</li>
       </ul>
     </details>
     <details>
@@ -146,7 +165,7 @@
   <div class="wrap">
     <p>Built from the <a href="https://github.com/witnessmenow/ESP32-Cheap-Yellow-Display/blob/main/PROJECTS.md">official CYD projects list</a> and the
     <a href="https://github.com/topics/cheap-yellow-display">#cheap-yellow-display</a> / <a href="https://github.com/topics/cyd">#cyd</a> GitHub topics.
-    Links go to each project's repo. Your "built" ticks are saved in this browser only.</p>
+    Difficulty ratings are our own estimate. Your "built" ticks are saved in this browser only.</p>
     <p>Not affiliated with any listed project. Contributions welcome — open a PR.</p>
   </div>
 </footer>
@@ -154,95 +173,95 @@
 <script>
 const P = [
   // ---- Games & Toys ----
-  {n:"ASCII Aquarium", c:"Games & Toys", hw:null, u:"https://github.com/POWER-PILL/ASCII-Aquarium", d:"Turns the screen into a tiny animated ASCII fish tank."},
-  {n:"Pixel Aquarium", c:"Games & Toys", hw:null, u:"https://github.com/Lagerpun/esp32-cyd-aquarium", d:"A self-running little pixel aquarium that just... lives on your desk."},
-  {n:"Fluid Simulation", c:"Games & Toys", hw:null, u:"https://github.com/colonelwatch/ESP32-fluid-simulation", d:"Touch-driven real-time fluid simulation. Very satisfying."},
-  {n:"BAM Game Engine", c:"Games & Toys", hw:null, u:"https://github.com/calint/bam", d:"2D engine: smooth scrolling tilemaps + layered pixel-precise sprites."},
-  {n:"Slots o' Fun", c:"Games & Toys", hw:null, u:"https://github.com/gabe-sky/Slots_o_fun", d:"A Texas-themed touch slot machine."},
-  {n:"Paintbox", c:"Games & Toys", hw:null, u:"https://github.com/mikerr/cyd-paintbox", d:"Finger/stylus drawing + paint app for the CYD touch screen."},
-  {n:"TinyCanvas", c:"Games & Toys", hw:null, u:"https://github.com/EJA-creative/tinycanvas-cyd", d:"Kid-friendly drawing pad with stylus input + optional cloud upload."},
-  {n:"Spring-Mass Fish", c:"Games & Toys", hw:null, u:"https://github.com/jef-sure/cyd-demo", d:"Springy physics fish simulation demo."},
-  {n:"QR Code Generator", c:"Games & Toys", hw:null, u:"https://github.com/MadOrkestra/QRCodeTest", d:"Scalable on-device QR code example — handy building block."},
+  {n:"ASCII Aquarium", c:"Games & Toys", hw:null, df:"Beginner", u:"https://github.com/POWER-PILL/ASCII-Aquarium", d:"Turns the screen into a tiny animated ASCII fish tank."},
+  {n:"Pixel Aquarium", c:"Games & Toys", hw:null, df:"Beginner", u:"https://github.com/Lagerpun/esp32-cyd-aquarium", d:"A self-running little pixel aquarium that just... lives on your desk."},
+  {n:"Fluid Simulation", c:"Games & Toys", hw:null, df:"Intermediate", u:"https://github.com/colonelwatch/ESP32-fluid-simulation", d:"Touch-driven real-time fluid simulation. Very satisfying."},
+  {n:"BAM Game Engine", c:"Games & Toys", hw:null, df:"Advanced", u:"https://github.com/calint/bam", d:"2D engine: smooth scrolling tilemaps + layered pixel-precise sprites."},
+  {n:"Slots o' Fun", c:"Games & Toys", hw:null, df:"Beginner", u:"https://github.com/gabe-sky/Slots_o_fun", d:"A Texas-themed touch slot machine."},
+  {n:"Paintbox", c:"Games & Toys", hw:null, df:"Beginner", u:"https://github.com/mikerr/cyd-paintbox", d:"Finger/stylus drawing + paint app for the CYD touch screen."},
+  {n:"TinyCanvas", c:"Games & Toys", hw:null, df:"Beginner", u:"https://github.com/EJA-creative/tinycanvas-cyd", d:"Kid-friendly drawing pad with stylus input + optional cloud upload."},
+  {n:"Spring-Mass Fish", c:"Games & Toys", hw:null, df:"Intermediate", u:"https://github.com/jef-sure/cyd-demo", d:"Springy physics fish simulation demo."},
+  {n:"QR Code Generator", c:"Games & Toys", hw:null, df:"Beginner", u:"https://github.com/MadOrkestra/QRCodeTest", d:"Scalable on-device QR code example — handy building block."},
 
   // ---- Info Dashboards ----
-  {n:"Spotify DIY Thing", c:"Info Dashboards", hw:null, u:"https://github.com/witnessmenow/Spotify-Diy-Thing", d:"Shows your currently-playing Spotify track + art. The classic first build."},
-  {n:"Spotify Visualizer", c:"Info Dashboards", hw:null, u:"https://github.com/waywardtech/cyd-spotify-visualizer", d:"Beat-synced Spotify visualizer with seven modes."},
-  {n:"F1 Notifier", c:"Info Dashboards", hw:null, u:"https://github.com/witnessmenow/F1-Arduino-Notifications", d:"Formula 1 session times shown in your local timezone."},
-  {n:"London Tube Arrivals", c:"Info Dashboards", hw:null, u:"https://github.com/mgaman/TFL-tube-arrivals-board-ESP32-TFT-Arduino", d:"Replica TFL train arrival board, JSON-configurable."},
-  {n:"GitHub Stats", c:"Info Dashboards", hw:null, u:"https://github.com/ATOMNFT/ESP32-CYD-Projects/tree/main/GitHub-Stats", d:"Live repo stars, forks, issues and notifications."},
-  {n:"System Monitor", c:"Info Dashboards", hw:null, u:"https://github.com/iamlite/CYD-System-Monitor", d:"PC CPU/RAM/GPU stats via the Glances API (runs on your PC)."},
-  {n:"Tickertronix", c:"Info Dashboards", hw:null, u:"https://github.com/Tickertronix/Tickertronix-Open", d:"Open-source financial / stock ticker display."},
+  {n:"Spotify DIY Thing", c:"Info Dashboards", hw:null, df:"Beginner", u:"https://github.com/witnessmenow/Spotify-Diy-Thing", guide:"spotify.html", d:"Shows your currently-playing Spotify track + art. The classic first build."},
+  {n:"Spotify Visualizer", c:"Info Dashboards", hw:null, df:"Intermediate", u:"https://github.com/waywardtech/cyd-spotify-visualizer", d:"Beat-synced Spotify visualizer with seven modes."},
+  {n:"F1 Notifier", c:"Info Dashboards", hw:null, df:"Beginner", u:"https://github.com/witnessmenow/F1-Arduino-Notifications", d:"Formula 1 session times shown in your local timezone."},
+  {n:"London Tube Arrivals", c:"Info Dashboards", hw:null, df:"Intermediate", u:"https://github.com/mgaman/TFL-tube-arrivals-board-ESP32-TFT-Arduino", d:"Replica TFL train arrival board, JSON-configurable."},
+  {n:"GitHub Stats", c:"Info Dashboards", hw:null, df:"Beginner", u:"https://github.com/ATOMNFT/ESP32-CYD-Projects/tree/main/GitHub-Stats", d:"Live repo stars, forks, issues and notifications."},
+  {n:"System Monitor", c:"Info Dashboards", hw:null, df:"Intermediate", u:"https://github.com/iamlite/CYD-System-Monitor", d:"PC CPU/RAM/GPU stats via the Glances API (runs on your PC)."},
+  {n:"Tickertronix", c:"Info Dashboards", hw:null, df:"Intermediate", u:"https://github.com/Tickertronix/Tickertronix-Open", d:"Open-source financial / stock ticker display."},
 
   // ---- Weather & Sensors ----
-  {n:"Aura Weather", c:"Weather & Sensors", hw:null, u:"https://github.com/Surrey-Homeware/Aura", d:"Clean weather forecast via the OpenMeteo API."},
-  {n:"cyd Weather Station", c:"Weather & Sensors", hw:null, u:"https://github.com/gustheseventh/cyd-Weather-Station", d:"Internet weather display, no sensors needed."},
-  {n:"Weather + Forecast", c:"Weather & Sensors", hw:null, u:"https://github.com/AndroidCrypto/ESP32_CYD_Weather_Station_With_Forecast", d:"Internet-based station with multi-day forecast."},
-  {n:"cydWeeWX", c:"Weather & Sensors", hw:null, u:"https://github.com/hcomet/cydWeeWX", d:"Front-end for a WeeWX weather-station server."},
-  {n:"Weather + Air Quality", c:"Weather & Sensors", hw:null, u:"https://github.com/disquisitioner/wxaq_cyd", d:"Aggregates weather and air-quality data."},
-  {n:"DHT11 Temp/Humidity", c:"Weather & Sensors", hw:"DHT11 sensor", u:"https://github.com/roycuadra/ESP32-CYD-DHT11", d:"Local room temperature + humidity GUI."},
+  {n:"Aura Weather", c:"Weather & Sensors", hw:null, df:"Beginner", u:"https://github.com/Surrey-Homeware/Aura", d:"Clean weather forecast via the OpenMeteo API."},
+  {n:"cyd Weather Station", c:"Weather & Sensors", hw:null, df:"Beginner", u:"https://github.com/gustheseventh/cyd-Weather-Station", d:"Internet weather display, no sensors needed."},
+  {n:"Weather + Forecast", c:"Weather & Sensors", hw:null, df:"Beginner", u:"https://github.com/AndroidCrypto/ESP32_CYD_Weather_Station_With_Forecast", d:"Internet-based station with multi-day forecast."},
+  {n:"cydWeeWX", c:"Weather & Sensors", hw:null, df:"Intermediate", u:"https://github.com/hcomet/cydWeeWX", d:"Front-end for a WeeWX weather-station server."},
+  {n:"Weather + Air Quality", c:"Weather & Sensors", hw:null, df:"Intermediate", u:"https://github.com/disquisitioner/wxaq_cyd", d:"Aggregates weather and air-quality data."},
+  {n:"DHT11 Temp/Humidity", c:"Weather & Sensors", hw:"DHT11 sensor", df:"Beginner", u:"https://github.com/roycuadra/ESP32-CYD-DHT11", d:"Local room temperature + humidity GUI."},
 
   // ---- Smart Home ----
-  {n:"CYD-Klipper", c:"Smart Home", hw:null, u:"https://github.com/suchmememanyskill/CYD-Klipper", d:"Wireless status + control for Klipper 3D printers."},
-  {n:"xtouch (BambuLab)", c:"Smart Home", hw:null, u:"https://github.com/xperiments-in/xtouch", d:"Touch control panel for BambuLab printers."},
-  {n:"Home Assistant Monitor", c:"Smart Home", hw:null, u:"https://github.com/element-software/CYD-ESPHome-HA-Monitor", d:"Display HA entities via ESPHome (YAML, no coding)."},
-  {n:"ESPHome Touch Panel", c:"Smart Home", hw:null, u:"https://github.com/akuehlewind/ESPHome-touch-display-mount", d:"LVGL HA touch panel + 3D-printed desk/wall mounts."},
-  {n:"Cydintosh", c:"Smart Home", hw:null, u:"https://github.com/likeablob/cydintosh", d:"A tiny Mac-68k-styled smart-home dashboard. Adorable."},
-  {n:"Tasmota", c:"Smart Home", hw:null, u:"https://templates.blakadder.com/sunton_ESP32-2432S028.html", d:"Run Tasmota smart-home firmware on the CYD."},
-  {n:"Stream Deck", c:"Smart Home", hw:null, u:"https://github.com/gahingwoo/cyd-stream-deck", d:"Bluetooth HID macro pad with a customizable touch grid."},
-  {n:"Sonos Remote", c:"Smart Home", hw:null, u:"https://github.com/SpringTideSystems/CYD_Sonos-RemoteControl", d:"Control Sonos speakers / internet radio."},
-  {n:"Smart Energy Meter", c:"Smart Home", hw:null, u:"https://github.com/anthony-spruyt/ESPHOME-ESP32_CYD_V2-SmartEnergyMeter", d:"ESPHome household energy monitor display."},
-  {n:"Thermostat", c:"Smart Home", hw:"Temp sensor + relay", u:"https://github.com/Qbunjo/esp32-cyd-thermostat", d:"Smart thermostat with Home Assistant integration."},
-  {n:"Smart Greenhouse", c:"Smart Home", hw:"Sensors + actuators", u:"https://github.com/elecavazza/smart-greenhouse", d:"Automated greenhouse controller."},
-  {n:"Cat Feeder Control", c:"Smart Home", hw:"Feeder mechanism", u:"https://github.com/NLLK/esp32-manual-cat-feed-control", d:"Manual pet-feeder control with web interface."},
+  {n:"CYD-Klipper", c:"Smart Home", hw:null, df:"Beginner", u:"https://github.com/suchmememanyskill/CYD-Klipper", d:"Wireless status + control for Klipper 3D printers."},
+  {n:"xtouch (BambuLab)", c:"Smart Home", hw:null, df:"Intermediate", u:"https://github.com/xperiments-in/xtouch", d:"Touch control panel for BambuLab printers."},
+  {n:"Home Assistant Monitor", c:"Smart Home", hw:null, df:"Intermediate", u:"https://github.com/element-software/CYD-ESPHome-HA-Monitor", d:"Display HA entities via ESPHome (YAML, no coding)."},
+  {n:"ESPHome Touch Panel", c:"Smart Home", hw:null, df:"Intermediate", u:"https://github.com/akuehlewind/ESPHome-touch-display-mount", d:"LVGL HA touch panel + 3D-printed desk/wall mounts."},
+  {n:"Cydintosh", c:"Smart Home", hw:null, df:"Intermediate", u:"https://github.com/likeablob/cydintosh", d:"A tiny Mac-68k-styled smart-home dashboard. Adorable."},
+  {n:"Tasmota", c:"Smart Home", hw:null, df:"Beginner", u:"https://templates.blakadder.com/sunton_ESP32-2432S028.html", d:"Run Tasmota smart-home firmware on the CYD."},
+  {n:"Stream Deck", c:"Smart Home", hw:null, df:"Intermediate", u:"https://github.com/gahingwoo/cyd-stream-deck", d:"Bluetooth HID macro pad with a customizable touch grid."},
+  {n:"Sonos Remote", c:"Smart Home", hw:null, df:"Intermediate", u:"https://github.com/SpringTideSystems/CYD_Sonos-RemoteControl", d:"Control Sonos speakers / internet radio."},
+  {n:"Smart Energy Meter", c:"Smart Home", hw:null, df:"Intermediate", u:"https://github.com/anthony-spruyt/ESPHOME-ESP32_CYD_V2-SmartEnergyMeter", d:"ESPHome household energy monitor display."},
+  {n:"Thermostat", c:"Smart Home", hw:"Temp sensor + relay", df:"Advanced", u:"https://github.com/Qbunjo/esp32-cyd-thermostat", d:"Smart thermostat with Home Assistant integration."},
+  {n:"Smart Greenhouse", c:"Smart Home", hw:"Sensors + actuators", df:"Advanced", u:"https://github.com/elecavazza/smart-greenhouse", d:"Automated greenhouse controller."},
+  {n:"Cat Feeder Control", c:"Smart Home", hw:"Feeder mechanism", df:"Intermediate", u:"https://github.com/NLLK/esp32-manual-cat-feed-control", d:"Manual pet-feeder control with web interface."},
 
   // ---- Emulators & Retro ----
-  {n:"PyDOS", c:"Emulators & Retro", hw:null, u:"https://github.com/RetiredWizard/PyDOS", d:"A DOS-like OS for MicroPython/CircuitPython boards."},
-  {n:"Galagino", c:"Emulators & Retro", hw:"Wii Nunchuck + adapter", u:"https://github.com/harbaum/galagino", d:"Arcade emulator: Galaga, Pac-Man, Donkey Kong, Dig Dug, Frogger."},
-  {n:"T-HMI-C64", c:"Emulators & Retro", hw:"BLE keyboard", u:"https://github.com/retroelec/T-HMI-C64", d:"Commodore 64 emulator with Android BLE keyboard."},
-  {n:"ESP32-TV", c:"Emulators & Retro", hw:"Speaker", u:"https://github.com/atomic14/esp32-tv", d:"Plays video on the CYD."},
-  {n:"Video Player", c:"Emulators & Retro", hw:"microSD card", u:"https://github.com/thelastoutpostworkshop/esp32-2432S028_video_player", d:"Play video files from SD."},
-  {n:"LocoTV", c:"Emulators & Retro", hw:"microSD / speaker", u:"https://github.com/schneekluth/locotv", d:"A children's video player."},
+  {n:"PyDOS", c:"Emulators & Retro", hw:null, df:"Intermediate", u:"https://github.com/RetiredWizard/PyDOS", d:"A DOS-like OS for MicroPython/CircuitPython boards."},
+  {n:"Galagino", c:"Emulators & Retro", hw:"Wii Nunchuck + adapter", df:"Intermediate", u:"https://github.com/harbaum/galagino", d:"Arcade emulator: Galaga, Pac-Man, Donkey Kong, Dig Dug, Frogger."},
+  {n:"T-HMI-C64", c:"Emulators & Retro", hw:"BLE keyboard", df:"Advanced", u:"https://github.com/retroelec/T-HMI-C64", d:"Commodore 64 emulator with Android BLE keyboard."},
+  {n:"ESP32-TV", c:"Emulators & Retro", hw:"Speaker", df:"Advanced", u:"https://github.com/atomic14/esp32-tv", d:"Plays video on the CYD."},
+  {n:"Video Player", c:"Emulators & Retro", hw:"microSD card", df:"Intermediate", u:"https://github.com/thelastoutpostworkshop/esp32-2432S028_video_player", d:"Play video files from SD."},
+  {n:"LocoTV", c:"Emulators & Retro", hw:"microSD / speaker", df:"Intermediate", u:"https://github.com/schneekluth/locotv", d:"A children's video player."},
 
   // ---- Security & Networking ----
-  {n:"ESP32 Marauder", c:"Security & Networking", hw:null, u:"https://github.com/Fr4nkFletcher/ESP32-Marauder-Cheap-Yellow-Display", d:"WiFi/BT recon + pentest toolkit. GPS optional for wardriving. Use responsibly."},
-  {n:"HaleHound", c:"Security & Networking", hw:null, u:"https://github.com/JesseCHale/HaleHound-CYD", d:"Multi-protocol offensive-security toolkit (ESP32-DIV edition)."},
+  {n:"ESP32 Marauder", c:"Security & Networking", hw:null, df:"Beginner", u:"https://github.com/Fr4nkFletcher/ESP32-Marauder-Cheap-Yellow-Display", d:"WiFi/BT recon + pentest toolkit. GPS optional for wardriving. Use responsibly."},
+  {n:"HaleHound", c:"Security & Networking", hw:null, df:"Intermediate", u:"https://github.com/JesseCHale/HaleHound-CYD", d:"Multi-protocol offensive-security toolkit (ESP32-DIV edition)."},
 
   // ---- Crypto ----
-  {n:"NerdMiner v2", c:"Crypto", hw:null, u:"https://github.com/Fr4nkFletcher/NerdMiner_v2-Cheap-Yellow-Display", d:"Bitcoin solo 'lottery' miner — fun, not profit."},
-  {n:"SparkMiner", c:"Crypto", hw:null, u:"https://github.com/SneezeGUI/SparkMiner", d:"High-performance open-source ESP32 solo miner."},
+  {n:"NerdMiner v2", c:"Crypto", hw:null, df:"Beginner", u:"https://github.com/Fr4nkFletcher/NerdMiner_v2-Cheap-Yellow-Display", d:"Bitcoin solo 'lottery' miner — fun, not profit."},
+  {n:"SparkMiner", c:"Crypto", hw:null, df:"Intermediate", u:"https://github.com/SneezeGUI/SparkMiner", d:"High-performance open-source ESP32 solo miner."},
 
   // ---- Utilities & Dev ----
-  {n:"cydOS", c:"Utilities & Dev", hw:null, u:"https://github.com/orlandobianco/cydOS", d:"File manager + firmware flashing UI for the CYD."},
-  {n:"rustCYDtouch", c:"Utilities & Dev", hw:null, u:"https://github.com/luque667788/rustCYDtouch", d:"Rust library for CYD touch — for the Rust-curious."},
-  {n:"MicroPython + LVGL", c:"Utilities & Dev", hw:null, u:"https://github.com/de-dh/ESP32-Cheap-Yellow-Display-Micropython-LVGL", d:"Run LVGL GUIs under MicroPython."},
-  {n:"MicroPython Examples", c:"Utilities & Dev", hw:null, u:"https://github.com/JettIsOnTheNet/Micropython-Examples-for-ESP32-Cheap-Yellow-Display", d:"Starter MicroPython examples for the CYD."},
-  {n:"DRO (Digital Readout)", c:"Utilities & Dev", hw:"Digital calipers/scales", u:"https://github.com/alanesq/DRO", d:"Cheap digital readout for lathes & mills."},
-  {n:"USB Terminal", c:"Utilities & Dev", hw:"Host PC (Python)", u:"https://github.com/omerbaysoy/CYD-USB-Terminal_v0.1", d:"USB serial telemetry / monitoring interface."},
-  {n:"Bluetooth OBD2 Gauge", c:"Utilities & Dev", hw:"OBD2 adapter + car", u:"https://github.com/VaAndCob/ESP32-Bluetooth-OBD2-Gauge", d:"DIY car diagnostics gauge over Bluetooth OBD2."},
+  {n:"cydOS", c:"Utilities & Dev", hw:null, df:"Intermediate", u:"https://github.com/orlandobianco/cydOS", d:"File manager + firmware flashing UI for the CYD."},
+  {n:"rustCYDtouch", c:"Utilities & Dev", hw:null, df:"Advanced", u:"https://github.com/luque667788/rustCYDtouch", d:"Rust library for CYD touch — for the Rust-curious."},
+  {n:"MicroPython + LVGL", c:"Utilities & Dev", hw:null, df:"Intermediate", u:"https://github.com/de-dh/ESP32-Cheap-Yellow-Display-Micropython-LVGL", d:"Run LVGL GUIs under MicroPython."},
+  {n:"MicroPython Examples", c:"Utilities & Dev", hw:null, df:"Beginner", u:"https://github.com/JettIsOnTheNet/Micropython-Examples-for-ESP32-Cheap-Yellow-Display", d:"Starter MicroPython examples for the CYD."},
+  {n:"DRO (Digital Readout)", c:"Utilities & Dev", hw:"Digital calipers/scales", df:"Intermediate", u:"https://github.com/alanesq/DRO", d:"Cheap digital readout for lathes & mills."},
+  {n:"USB Terminal", c:"Utilities & Dev", hw:"Host PC (Python)", df:"Intermediate", u:"https://github.com/omerbaysoy/CYD-USB-Terminal_v0.1", d:"USB serial telemetry / monitoring interface."},
+  {n:"Bluetooth OBD2 Gauge", c:"Utilities & Dev", hw:"OBD2 adapter + car", df:"Intermediate", u:"https://github.com/VaAndCob/ESP32-Bluetooth-OBD2-Gauge", d:"DIY car diagnostics gauge over Bluetooth OBD2."},
 
   // ---- Claude's fresh ideas (no repo — build these) ----
-  {n:"Desktop Pet / Tamagotchi", c:"💡 Ideas", hw:null, idea:1, d:"A touch-fed virtual creature; use the light sensor for day/night moods."},
-  {n:"Split-Flap Life Board", c:"💡 Ideas", hw:null, idea:1, d:"Your next bus/train/flight from a transit API, styled as a departures board."},
-  {n:"Pomodoro Focus Jar", c:"💡 Ideas", hw:null, idea:1, d:"Timer that fills a jar with animated marbles per finished session."},
-  {n:"DVD Bounce Screensaver", c:"💡 Ideas", hw:null, idea:1, d:"The logo bouncing around — with a satisfying corner-hit counter."},
-  {n:"Game of Life", c:"💡 Ideas", hw:null, idea:1, d:"Touch to draw cells, watch Conway's automaton evolve."},
-  {n:"Magic 8-Ball / Dice", c:"💡 Ideas", hw:null, idea:1, d:"Tap for an answer or a dice roll — great tabletop companion."},
-  {n:"MQTT Doorbell Toast", c:"💡 Ideas", hw:null, idea:1, d:"Subscribe to home MQTT; flash the RGB LED + toast on events."},
-  {n:"Air-Quality Traffic Light", c:"💡 Ideas", hw:"SCD40 / MH-Z19 CO₂ sensor", idea:1, d:"Whole screen glows green/amber/red by CO₂ level."},
-  {n:"Sound-Reactive VU Meter", c:"💡 Ideas", hw:"I2S / analog mic", idea:1, d:"Live spectrum analyzer that dances to the room."},
+  {n:"Desktop Pet / Tamagotchi", c:"💡 Ideas", hw:null, df:"Intermediate", idea:1, d:"A touch-fed virtual creature; use the light sensor for day/night moods."},
+  {n:"Split-Flap Life Board", c:"💡 Ideas", hw:null, df:"Intermediate", idea:1, d:"Your next bus/train/flight from a transit API, styled as a departures board."},
+  {n:"Pomodoro Focus Jar", c:"💡 Ideas", hw:null, df:"Beginner", idea:1, d:"Timer that fills a jar with animated marbles per finished session."},
+  {n:"DVD Bounce Screensaver", c:"💡 Ideas", hw:null, df:"Beginner", idea:1, d:"The logo bouncing around — with a satisfying corner-hit counter."},
+  {n:"Game of Life", c:"💡 Ideas", hw:null, df:"Beginner", idea:1, d:"Touch to draw cells, watch Conway's automaton evolve."},
+  {n:"Magic 8-Ball / Dice", c:"💡 Ideas", hw:null, df:"Beginner", idea:1, d:"Tap for an answer or a dice roll — great tabletop companion."},
+  {n:"MQTT Doorbell Toast", c:"💡 Ideas", hw:null, df:"Intermediate", idea:1, d:"Subscribe to home MQTT; flash the RGB LED + toast on events."},
+  {n:"Air-Quality Traffic Light", c:"💡 Ideas", hw:"SCD40 / MH-Z19 CO₂ sensor", df:"Intermediate", idea:1, d:"Whole screen glows green/amber/red by CO₂ level."},
+  {n:"Sound-Reactive VU Meter", c:"💡 Ideas", hw:"I2S / analog mic", df:"Advanced", idea:1, d:"Live spectrum analyzer that dances to the room."},
 ];
 
 const app = document.getElementById('app');
 const catSel = document.getElementById('cat');
+const diffSel = document.getElementById('diff');
 const q = document.getElementById('q');
 const onlyNoneBtn = document.getElementById('onlyNone');
 const hideDoneBtn = document.getElementById('hideDone');
 
-let state = { q:'', cat:'', onlyNone:false, hideDone:false };
+let state = { q:'', cat:'', diff:'', onlyNone:false, hideDone:false };
 const KEY = 'cyd-built-v1';
 const built = new Set(JSON.parse(localStorage.getItem(KEY)||'[]'));
 
-// category order
 const order = ["💡 Ideas","Games & Toys","Info Dashboards","Weather & Sensors","Smart Home","Emulators & Retro","Security & Networking","Crypto","Utilities & Dev"];
 const cats = [...new Set(P.map(p=>p.c))].sort((a,b)=>order.indexOf(a)-order.indexOf(b));
 cats.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;catSel.appendChild(o);});
@@ -264,6 +283,7 @@ function save(){localStorage.setItem(KEY, JSON.stringify([...built]));}
 function stats(){
   document.getElementById('s-total').textContent = P.filter(p=>!p.idea).length;
   document.getElementById('s-none').textContent = P.filter(p=>!p.hw && !p.idea).length;
+  document.getElementById('s-beg').textContent = P.filter(p=>p.df==='Beginner' && !p.idea).length;
   document.getElementById('s-done').textContent = built.size;
 }
 
@@ -275,6 +295,7 @@ function render(){
     let items = P.filter(p=>p.c===cat);
     items = items.filter(p=>{
       if(state.onlyNone && p.hw) return false;
+      if(state.diff && p.df!==state.diff) return false;
       if(state.hideDone && built.has(p.n)) return false;
       if(term && !(p.n+p.d).toLowerCase().includes(term)) return false;
       return true;
@@ -289,12 +310,14 @@ function render(){
       card.className='card'+(done?' done':'')+(p.idea?' idea':'');
       const title = p.u ? `<a href="${p.u}" target="_blank" rel="noopener">${p.n} ↗</a>` : p.n;
       const hw = p.hw
-        ? `<span class="hw needs">🔧 ${p.hw}</span>`
-        : `<span class="hw none">✅ No extra hardware</span>`;
+        ? `<span class="pill hw needs">🔧 ${p.hw}</span>`
+        : `<span class="pill hw none">✅ No extra hardware</span>`;
+      const df = `<span class="pill df ${p.df}">${p.df}</span>`;
+      const guide = p.guide ? `<a class="guide-link" href="${p.guide}">📖 Walkthrough</a>` : '';
       card.innerHTML=`
         <div class="top"><h3>${title}</h3></div>
         <p>${p.d}</p>
-        <div class="row">${hw}<span class="cat">${p.c}</span></div>
+        <div class="row">${df}${hw}<span class="cat">${p.c}</span>${guide}</div>
         <label class="chk"><input type="checkbox" ${done?'checked':''}> Built it</label>`;
       card.querySelector('input').addEventListener('change',e=>{
         if(e.target.checked)built.add(p.n);else built.delete(p.n);
@@ -311,6 +334,7 @@ function render(){
 
 q.addEventListener('input',e=>{state.q=e.target.value;render();});
 catSel.addEventListener('change',e=>{state.cat=e.target.value;render();});
+diffSel.addEventListener('change',e=>{state.diff=e.target.value;render();});
 onlyNoneBtn.addEventListener('click',()=>{state.onlyNone=!state.onlyNone;onlyNoneBtn.classList.toggle('active',state.onlyNone);render();});
 hideDoneBtn.addEventListener('click',()=>{state.hideDone=!state.hideDone;hideDoneBtn.classList.toggle('active',state.hideDone);render();});
 document.getElementById('reset').addEventListener('click',()=>{if(confirm('Clear all your built ticks?')){built.clear();save();render();}});
